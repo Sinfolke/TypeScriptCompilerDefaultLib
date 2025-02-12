@@ -69,7 +69,7 @@ export namespace PrimeHelpers
     }
 
     // Returns size of hashtable to grow to.
-    function expandPrime(oldSize: int): int 
+    export function expandPrime(oldSize: int): int 
     {
         const newSize = 2 * oldSize;
 
@@ -82,4 +82,35 @@ export namespace PrimeHelpers
 
         return getPrime(newSize);
     }    
+}
+
+export namespace HashHelpers
+{
+    export function hashCodeBinary(key: Opaque, size: index): int {
+        let hashValue = 0;
+        let power = 1;
+        const mod = 10 ** 9 + 7;
+
+        const value4BytesRef: Reference<i32> = key;
+        const count4 = size >> 2;
+        for (let offset = 0; offset < count4; offset ++) {
+            const int32 = LoadReference(value4BytesRef[offset]);
+            hashValue = (hashValue + int32 * power) % mod;
+            power = (power * PrimeHelpers.hashPrime) % mod
+        }        
+
+        const start4 = count4 << 2;
+        const valueByteRef: Reference<byte> = key;
+        for (let offset = start4; offset < size; offset ++) {
+            const byte = LoadReference(valueByteRef[offset]);
+            hashValue = (hashValue + byte * power) % mod;
+            power = (power * PrimeHelpers.hashPrime) % mod
+        }
+
+        return hashValue;        
+    }
+
+    export function hashCodeString(key: string): int {
+        return hashCodeBinary(ReferenceOf(key[0]), key.length);
+    }
 }
