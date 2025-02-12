@@ -7,12 +7,13 @@ TOOL=gcc
 ARC=ar
 DBG_OPTS=--di\ --opt_level=0
 DBG_GCC=
+STRING_DEFINES="-DFORCE_UTF=16"
 
 if [ "$1" == "release" ] ; then
 	TOOL_BUILD=release
 	BUILD=release
 	DBG_OPTS=--opt\ --opt_level=3
-	DBG_GCC=-g -O3
+	DBG_GCC=-g\ -O3
 fi
 
 if [ "$2" == "clang" ] ; then
@@ -50,11 +51,12 @@ fi
 
 mkdir -p dll/$BUILD
 mkdir -p lib/$BUILD
+$TOOL -c $STRING_DEFINES -o $OUTPUT/lib/$BUILD/String.o C/String.c
 $BIN_PATH/tsc $DBG_OPTS --emit=obj --export=none --no-default-lib $SRC/src/lib.linux.ts $PIC -o $OUTPUT/lib/$BUILD/lib.linux.o
+$BIN_PATH/tsc $DBG_OPTS --emit=obj --export=none --no-default-lib $SRC/src/lib.ts $PIC -o $OUTPUT/lib/$BUILD/lib.o
 
 # Build Lib
-$BIN_PATH/tsc $DBG_OPTS --emit=obj --export=none --no-default-lib $SRC/src/lib.ts $PIC -o $OUTPUT/lib/$BUILD/lib.o
-$ARC rcs $OUTPUT/lib/$BUILD/libTypeScriptDefaultLib.a $OUTPUT/lib/$BUILD/lib.o $OUTPUT/lib/$BUILD/lib.linux.o
+$ARC rcs $OUTPUT/lib/$BUILD/libTypeScriptDefaultLib.a $OUTPUT/lib/$BUILD/lib.o $OUTPUT/lib/$BUILD/lib.linux.o $OUTPUT/lib/$BUILD/String.o
 
 # Build DLL
 gcc -shared $DBG_GCC $OUTPUT/lib/$BUILD/lib.o $OUTPUT/lib/$BUILD/lib.linux.o -o $OUTPUT/dll/$BUILD/libTypeScriptDefaultLib.so

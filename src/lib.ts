@@ -5,7 +5,8 @@
 /// <reference path="generics/lib.generics.ts" />
 
 // @strict-null false
-
+declare function _cfromCharCode(numN: u16[], len: ulong): string;
+declare function _cfromCodePoint(numN: double[], len: ulong): string;
 export function parseInt(val: string, radix = 10) {
     return strtol(val, null, radix);
 }
@@ -856,7 +857,14 @@ class StringIterator implements ClassIterator<string> {
 */
 
 export class String {
-
+    static fromCharCode(...numN: u16[]): string {
+        return _cfromCharCode(numN, numN.length);
+    }
+    static fromCodeCode(...numN: double[]): string {
+        if (numN.length == 0)
+            return "";
+        return _cfromCodePoint(numN, numN.length);
+    }
     public constructor(private value: string) {
     }
 

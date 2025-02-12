@@ -1,16 +1,22 @@
 const LC_COLLATE = 1;
 
 export class Error {
+    public name: string = "Error";
+    public cause: string;
     public constructor(public message?: string, public filename?: string, public line?: int) {
+    }
+
+    toString() {
+        return `${this.name}: ${this.message}`;
     }
 }
 
 export class RangeError extends Error {
     public constructor(message?: string, filename?: string, line?: int) {
         super(message, filename, line);
+        this.name = "RangeError";
     }
 }
-
 export namespace PrimeHelpers
 {
     export const hashPrime = 101;

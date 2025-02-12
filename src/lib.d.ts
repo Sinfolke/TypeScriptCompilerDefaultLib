@@ -290,8 +290,9 @@ declare namespace __String {
 
     function valueOf(this: string): string;
 }
-
 declare class String {
+    static fromCharCode(...numN: u16[]): string;
+    static fromCodePoint(...numN: double[]): string;
     private value: string;
 
     constructor(value: string);
